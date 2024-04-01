@@ -1,0 +1,194 @@
+'use client'
+
+import React, { useEffect } from 'react'
+import { useParams } from 'next/navigation'
+import Dashboard from '@/app/admin/dashboard/page'
+import { useFormik } from 'formik'
+import { doctorUpdateValidationSchema } from "../../../helper/Validations";
+import { doctorUpdate, doctorDetail } from "@/services/adminServices";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import BackButton from '@/components/backButton/page'
+
+const Profile = () => {
+    const {id} = useParams()
+
+    const getDoctorDetails = async() =>{
+        const response = await doctorDetail(id)
+        formik.setValues(response.data.data)
+    }
+
+    useEffect(()=>{
+        if(id){
+            getDoctorDetails()
+        }
+    },[id])
+
+    const formik = useFormik({
+        initialValues: {
+            first_name: "",
+            last_name: "",
+            email: "",
+            location: "",
+            designation: "",
+            languages: "",
+        },
+        validationSchema: doctorUpdateValidationSchema,
+        onSubmit: async (values, { setSubmitting }) => {
+            try {
+                const response = await doctorUpdate(id, values)
+                toast.success(response?.data?.message)
+                setSubmitting(false);
+            } catch (error) {
+                toast.error(error?.response?.data?.message || error.message)
+                console.error(error);
+                setSubmitting(false);
+            }
+        },
+    });
+    return (
+        <Dashboard>
+            <BackButton />
+            <h1 className="text-3xl text-black">Update doctor profile</h1>
+            <form onSubmit={formik.handleSubmit} class="w-full max-w-[700px] m-auto bg-gray-50 p-5 rounded mt-5">
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label
+                            class="block uppercase tracking-wide text-black text-xs font-bold mb-2"
+                            for="grid-first-name"
+                        >
+                            First Name
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-black border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white"
+                            id="grid-first-name"
+                            type="text"
+                            placeholder="Enter your first name"
+                            name="first_name"
+                            value={formik.values.first_name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.first_name && formik?.errors?.first_name && <p class="text-red-500 text-xs ">
+                            {formik?.errors?.first_name}
+                        </p>}
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label
+                            class="block uppercase tracking-wide text-black text-xs font-bold mb-2"
+                            for="grid-last-name"
+                        >
+                            Last Name
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 mb-1"
+                            id="grid-last-name"
+                            type="text"
+                            placeholder="Enter your last name"
+                            name="last_name"
+                            value={formik.values.last_name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.last_name && formik?.errors?.last_name && <p class="text-red-500 text-xs ">
+                            {formik?.errors?.last_name}
+                        </p>}
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-6">
+                    <div class="w-1/2 px-3">
+                        <label
+                            class="block uppercase tracking-wide text-black text-xs font-bold mb-2"
+                            for="grid-email"
+                        >
+                            Email
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-black border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            id="grid-email"
+                            type="email"
+                            placeholder="Enter your email"
+                            name="email"
+                            value={formik.values.email}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.email && formik?.errors?.email && <p class="text-red-500 text-xs ">
+                            {formik?.errors?.email}
+                        </p>}
+                    </div>
+                    <div class="w-1/2 px-3">
+                        <label
+                            class="block uppercase tracking-wide text-black text-xs font-bold mb-2"
+                            for="grid-location"
+                        >
+                            Address
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-black border border-gray-200 rounded py-3 px-4 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            id="grid-location"
+                            type="text"
+                            placeholder="Enter your address"
+                            name="location"
+                            value={formik.values.location}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.location && formik?.errors?.location && <p class="text-red-500 text-xs ">
+                            {formik?.errors?.location}
+                        </p>}
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3 mb-2">
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label
+                            class="block uppercase tracking-wide text-black text-xs font-bold mb-2"
+                            for="grid-designation"
+                        >
+                            Designation
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 mb-1"
+                            id="grid-designation"
+                            type="text"
+                            placeholder="Enter your designation"
+                            name="designation"
+                            value={formik.values.designation}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.designation && formik?.errors?.designation && <p class="text-red-500 text-xs ">
+                            {formik?.errors?.designation}
+                        </p>}
+                    </div>
+                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                        <label
+                            class="block uppercase tracking-wide text-black text-xs font-bold mb-2"
+                            for="grid-languages"
+                        >
+                            Languages
+                        </label>
+                        <input
+                            class="appearance-none block w-full bg-white text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 mb-1"
+                            id="grid-languages"
+                            type="text"
+                            placeholder="Enter your Languages"
+                            name="languages"
+                            value={formik.values.languages}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                        {formik.touched.languages && formik?.errors?.languages && <p class="text-red-500 text-xs ">
+                            {formik?.errors?.languages}
+                        </p>}
+                    </div>
+                </div>
+                <div className="text-end">
+                    <button type="submit" className="bg-gray-700 text-white px-4 py-1 rounded mt-3">Update</button>
+                </div>
+            </form>
+        </Dashboard>
+    )
+}
+
+export default Profile
